@@ -5,16 +5,16 @@ orbs:
 workflows:
   heroku_deploy:
     jobs:
-      - test_code
+      - test_server_database
       - heroku/deploy-via-git:
           requires:
-            - test_code
+            - test_server_database
           filters:
             branches:
               only: main
 
 jobs:
-  test_code:
+  test_server_database:
     docker:
       - image: circleci/node:14
     steps:
