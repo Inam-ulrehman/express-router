@@ -16,7 +16,7 @@ workflows:
             branches:
               only: main
           when:
-            condition: << pipeline.parameters.tests_enabled == true >>
+            condition: ${{ parameters.tests_enabled == true }}
 
 jobs:
   test_database_server:
