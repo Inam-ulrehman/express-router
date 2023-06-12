@@ -19,7 +19,4 @@ jobs:
           command: npm install
       - run:
           name: Run tests
-          command: npm test
-      - run:
-          name: Run tests with Jest (detect open handles)
           command: npx jest --detectOpenHandles
