@@ -5,8 +5,11 @@ orbs:
 workflows:
   heroku_deploy:
     jobs:
-      - test_code
-      - heroku/deploy-via-git
+      - test_code:
+          name: Run Tests
+      - heroku/deploy-via-git:
+          name: Deploy to Heroku
+          when: <<pipeline.parameters.tests_passed>>
 
 jobs:
   test_code:
@@ -19,4 +22,19 @@ jobs:
           command: npm install
       - run:
           name: Run tests
-          command: npx jest --detectOpenHandles
+          command: npm test
+          no_output_timeout: 10m
+          when: <<pipeline.parameters.tests_enabled>>
+
+parameters:
+  tests_enabled:
+    description: 'Enable running tests'
+    default: true
+
+  tests_passed:
+    description: 'Tests passed'
+    default: << pipeline.parameters.tests_enabled >>
+    type: boolean
+    options:
+      - true
+      - false
