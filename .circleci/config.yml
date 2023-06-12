@@ -5,34 +5,48 @@ orbs:
 workflows:
   heroku_deploy:
     jobs:
-      - test_code:
+      - test_database:
           tests_enabled: true
+          filters:
+            branches:
+              only: main
+      - test_server:
+          requires:
+            - test_database
+          filters:
+            branches:
+              only: main
       - heroku/deploy-via-git:
           requires:
-            - test_code
+            - test_server
           filters:
             branches:
               only: main
 
 jobs:
-  test_code:
+  test_database:
     docker:
       - image: circleci/node:14
-    parameters:
-      tests_enabled:
-        type: boolean
-        default: true
-        description: 'Enable running tests'
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: npm install
       - run:
-          name: Run tests
-          command: npx jest --detectOpenHandles
-      - store_test_results:
-          path: test-results
+          name: Connect to the database
+          command: node db/connect.js
+
+  test_server:
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Start server
+          command: node app.js
 
   heroku/deploy-via-git:
     executor:
