@@ -28,13 +28,11 @@ jobs:
 
 parameters:
   tests_enabled:
-    description: 'Enable running tests'
+    type: boolean
     default: true
+    description: 'Enable running tests'
 
   tests_passed:
-    description: 'Tests passed'
-    default: << pipeline.parameters.tests_enabled >>
     type: boolean
-    options:
-      - true
-      - false
+    default: << pipeline.parameters.tests_enabled >>
+    description: 'Tests passed'
