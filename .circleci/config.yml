@@ -7,6 +7,9 @@ workflows:
     jobs:
       - test_code:
           tests_enabled: true
+          filters:
+            branches:
+              only: main
       - heroku/deploy-via-git:
           requires:
             - test_code
