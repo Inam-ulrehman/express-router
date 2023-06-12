@@ -5,20 +5,21 @@ orbs:
 workflows:
   heroku_deploy:
     jobs:
-      - test_code:
-          tests_enabled: true
+      - test_database_server:
           filters:
             branches:
               only: main
       - heroku/deploy-via-git:
           requires:
-            - test_code
+            - test_database_server
           filters:
             branches:
               only: main
+          when:
+            condition: << pipeline.parameters.tests_enabled == true >>
 
 jobs:
-  test_code:
+  test_database_server:
     docker:
       - image: circleci/node:14
     parameters:
