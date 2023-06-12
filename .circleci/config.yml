@@ -33,7 +33,7 @@ jobs:
           filters:
             branches:
               only: main
-          when: << pipeline.parameters.tests_passed == true >>
+          when: \<< pipeline.parameters.tests_passed == true >>
 
   deploy_to_heroku:
     executor:
