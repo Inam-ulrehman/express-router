@@ -6,7 +6,12 @@ workflows:
   heroku_deploy:
     jobs:
       - test_code
-      - heroku/deploy-via-git
+      - heroku/deploy-via-git:
+          requires:
+            - test_code
+          filters:
+            branches:
+              only: main
 
 jobs:
   test_code:
@@ -22,6 +27,8 @@ jobs:
           command: npm test
       - run:
           name: Start server
-          command: npm start
+          command: npm start &
+      - run:
+          name: Wait for server to start
+          command: sleep 10 # Adjust the sleep duration as needed
 
-      # Add any additional steps or commands here
