@@ -5,12 +5,18 @@ orbs:
 workflows:
   heroku_deploy:
     jobs:
-      - test_code
+      - test_code_and_deploy:
+          tests_enabled: true
 
 jobs:
-  test_code:
+  test_code_and_deploy:
     docker:
       - image: circleci/node:14
+    parameters:
+      tests_enabled:
+        type: boolean
+        default: true
+        description: 'Enable running tests'
     steps:
       - checkout
       - run:
@@ -23,7 +29,7 @@ jobs:
           path: test-results
       - deploy_to_heroku:
           requires:
-            - test_code
+            - test_code_and_deploy
           filters:
             branches:
               only: main
@@ -33,6 +39,4 @@ jobs:
       name: heroku/default
     steps:
       - checkout
-      - run:
-          name: Deploy to Heroku
-          command: heroku/deploy-via-git
+      - heroku/deploy-via-git
