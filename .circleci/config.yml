@@ -6,7 +6,6 @@ workflows:
   heroku_deploy:
     jobs:
       - test_database:
-          tests_enabled: true
           filters:
             branches:
               only: main
