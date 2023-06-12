@@ -5,9 +5,7 @@ workflows:
   heroku_deploy:
     jobs:
       - test_code
-      - deploy_to_heroku:
-          requires:
-            - test_code
+      - heroku/deploy-via-git
 
 jobs:
   test_code:
@@ -21,23 +19,3 @@ jobs:
       - run:
           name: Run tests
           command: npm test
-          when: always
-
-  deploy_to_heroku:
-    docker:
-      - image: circleci/heroku:1.2.6
-    steps:
-      - checkout
-      - run:
-          name: Deploy to Heroku
-          command: |
-            if node -e "require('./app')" 2>/dev/null; then
-              # Add your deployment commands here
-              # For example:
-              # - heroku login
-              # - heroku git:remote -a your-heroku-app
-              # - git push heroku main
-              - heroku/deploy-via-git
-            else
-              echo "Application failed to start. Skipping deployment."
-            fi
