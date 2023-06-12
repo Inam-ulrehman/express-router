@@ -17,6 +17,12 @@ jobs:
           path: test-results
       - store_artifacts:
           path: test-results
+
+  deploy_to_heroku:
+    executor:
+      name: heroku/default
+    steps:
+      - checkout
       - run:
           name: Deploy to Heroku
           command: heroku/deploy-via-git
@@ -29,3 +35,11 @@ workflows:
           filters:
             branches:
               only: main
+      - deploy_to_heroku:
+          requires:
+            - test_and_deploy
+          filters:
+            branches:
+              only: main
+          when:
+            condition: << pipeline.parameters.tests_passed == true >>
