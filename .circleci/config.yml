@@ -5,13 +5,26 @@ orbs:
 workflows:
   heroku_deploy:
     jobs:
-      - test_database
+      - test_database:
+          filters:
+            branches:
+              only: main
       - test_server:
           requires:
             - test_database
+          filters:
+            branches:
+              only: main
+          when:
+            condition: << pipeline.parameters.database_test_success == "true" >>
       - deploy_to_heroku:
           requires:
             - test_server
+          filters:
+            branches:
+              only: main
+          when:
+            condition: << pipeline.parameters.server_test_success == "true" >>
 
 jobs:
   test_database:
@@ -27,12 +40,25 @@ jobs:
           command: npx jest --detectOpenHandles tests/connectDB.test.js
       - store_test_results:
           path: test-results
+          when: always
+      - store_artifacts:
+          path: test-results
+          when: always
+      - persist_to_workspace:
+          root: .
+          paths:
+            - test-results
+          when: always
+      - run:
+          name: Set database test success flag
+          command: echo "database_test_success=true" >> $BASH_ENV
 
   test_server:
     docker:
       - image: circleci/node:14
     steps:
-      - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: Install dependencies
           command: npm install
@@ -41,6 +67,13 @@ jobs:
           command: npx jest --detectOpenHandles tests/serverLive.test.js
       - store_test_results:
           path: test-results
+          when: always
+      - store_artifacts:
+          path: test-results
+          when: always
+      - run:
+          name: Set server test success flag
+          command: echo "server_test_success=true" >> $BASH_ENV
 
   deploy_to_heroku:
     executor:
