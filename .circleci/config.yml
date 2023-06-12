@@ -4,4 +4,18 @@ orbs:
 workflows:
   heroku_deploy:
     jobs:
+      - test_code
       - heroku/deploy-via-git
+
+jobs:
+  test_code:
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Run tests
+          command: npm test
