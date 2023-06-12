@@ -5,22 +5,13 @@ orbs:
 workflows:
   heroku_deploy:
     jobs:
-      - test_database:
-          filters:
-            branches:
-              only: main
+      - test_database
       - test_server:
           requires:
             - test_database
-          filters:
-            branches:
-              only: main
       - deploy_to_heroku:
           requires:
             - test_server
-          filters:
-            branches:
-              only: main
 
 jobs:
   test_database:
@@ -36,11 +27,6 @@ jobs:
           command: npx jest --detectOpenHandles tests/connectDB.test.js
       - store_test_results:
           path: test-results
-    post-steps:
-      - when:
-          condition: << pipeline.test_database.result == "success" >>
-          steps:
-            - test_server
 
   test_server:
     docker:
@@ -55,11 +41,6 @@ jobs:
           command: npx jest --detectOpenHandles tests/serverLive.test.js
       - store_test_results:
           path: test-results
-    post-steps:
-      - when:
-          condition: << pipeline.test_server.result == "success" >>
-          steps:
-            - deploy_to_heroku
 
   deploy_to_heroku:
     executor:
