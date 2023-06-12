@@ -6,7 +6,9 @@ app.get('/', (req, res) => {
   res.send(`Client IP: ${clientIP}`)
 })
 
-const server = app.listen(3000, () => {
+const port = process.env.PORT || 3000
+
+const server = app.listen(port, () => {
   console.log('Server is listening on port 3000...')
 })
 
