@@ -15,8 +15,6 @@ workflows:
           filters:
             branches:
               only: main
-          steps:
-            - heroku/deploy-via-git
 
 jobs:
   test_code:
@@ -38,4 +36,6 @@ jobs:
       name: heroku/default
     steps:
       - checkout
-      - heroku/deploy-via-git
+      - run:
+          name: Deploy to Heroku
+          command: heroku/deploy-via-git
