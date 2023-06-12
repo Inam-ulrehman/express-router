@@ -1,20 +1,14 @@
-import express from 'express'
+const express = require('express')
 const app = express()
 
 app.get('/', (req, res) => {
   const clientIP = req.ip
-  res.send(`Client inam IP: ${clientIP}`)
+  res.send(`Client IP: ${clientIP}`)
 })
 
-const port = process.env.PORT || 3000
-const start = async () => {
-  try {
-    app.listen(port, () =>
-      console.log(`Server is listening on port ${port}...`)
-    )
-  } catch (error) {
-    console.log(error)
-  }
-}
+module.exports = app // Export the app for testing
 
-start()
+const port = process.env.PORT || 3000
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}...`)
+})
