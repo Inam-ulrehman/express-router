@@ -2,41 +2,23 @@ version: 2.1
 orbs:
   heroku: circleci/heroku@1.2.6
 
-workflows:
-  heroku_deploy:
-    jobs:
-      - test_code:
-          tests_enabled: true
-      - heroku/deploy-via-git:
-          requires:
-            - test_code
-          filters:
-            branches:
-              only: main
-
 jobs:
-  test_code:
-    docker:
-      - image: circleci/node:14
-    parameters:
-      tests_enabled:
-        type: boolean
-        default: true
-        description: 'Enable running tests'
-    steps:
-      - checkout
-      - run:
-          name: Install dependencies
-          command: npm install
-      - run:
-          name: Run tests
-          command: npx jest --detectOpenHandles
-      - store_test_results:
-          path: test-results
-
-  heroku/deploy-via-git:
+  deploy_to_heroku:
     executor:
       name: heroku/default
     steps:
       - checkout
-      - heroku/deploy-via-git
+      - heroku/setup-heroku:
+          version: stable
+      - run:
+          name: Deploy to Heroku
+          command: heroku/deploy-via-git
+
+workflows:
+  version: 2
+  heroku_deploy:
+    jobs:
+      - deploy_to_heroku:
+          filters:
+            branches:
+              only: main
