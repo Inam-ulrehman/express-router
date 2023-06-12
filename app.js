@@ -1,16 +1,35 @@
 const express = require('express')
+const connectDB = require('./db/connect')
+require('dotenv').config()
+
 const app = express()
 
+// Middleware
+
 app.get('/', (req, res) => {
-  const clientIP = req.ip
-  res.send(`Client IP: ${clientIP}`)
+  res.sendStatus(200)
 })
 
-const server = app.listen(3000, () => {
-  console.log('Server is listening on port 3000...')
-})
+// Database connection and server startup
+const port = process.env.PORT || 3000
+const startServer = async () => {
+  try {
+    await connectDB() // Connect to the database
+    const server = app.listen(port, () => {
+      if (process.env.NODE_ENV !== 'test') {
+        console.log(`Server is listening on port ${port}...`)
+      }
+    })
+    return server
+  } catch (error) {
+    console.error('Failed to connect to the database:', error)
+    throw error
+  }
+}
+
+startServer()
 
 module.exports = {
   app,
-  server,
+  startServer,
 }
