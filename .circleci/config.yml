@@ -2,23 +2,26 @@ version: 2.1
 orbs:
   heroku: circleci/heroku@1.2.6
 
-jobs:
-  deploy_to_heroku:
-    executor:
-      name: heroku/default
-    steps:
-      - checkout
-      - heroku/setup-heroku:
-          version: stable
-      - run:
-          name: Deploy to Heroku
-          command: heroku/deploy-via-git
-
 workflows:
-  version: 2
   heroku_deploy:
     jobs:
-      - deploy_to_heroku:
-          filters:
-            branches:
-              only: main
+      - test_code
+      - heroku/deploy-via-git
+
+jobs:
+  test_code:
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Run tests
+          command: npm test
+      - run:
+          name: Start server
+          command: npm start
+
+      # Add any additional steps or commands here
