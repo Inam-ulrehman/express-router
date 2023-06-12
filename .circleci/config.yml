@@ -5,11 +5,17 @@ orbs:
 workflows:
   heroku_deploy:
     jobs:
-      - test_code_and_deploy:
+      - test_code:
           tests_enabled: true
+      - heroku/deploy-via-git:
+          requires:
+            - test_code
+          filters:
+            branches:
+              only: main
 
 jobs:
-  test_code_and_deploy:
+  test_code:
     docker:
       - image: circleci/node:14
     parameters:
@@ -27,14 +33,8 @@ jobs:
           command: npx jest --detectOpenHandles
       - store_test_results:
           path: test-results
-      - deploy_to_heroku:
-          requires:
-            - test_code_and_deploy
-          filters:
-            branches:
-              only: main
 
-  deploy_to_heroku:
+  heroku/deploy-via-git:
     executor:
       name: heroku/default
     steps:
