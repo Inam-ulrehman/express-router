@@ -3,7 +3,7 @@ const app = express()
 
 app.get('/', (req, res) => {
   const clientIP = req.ip
-  res.send(`Client inam jee a IP: ${clientIP}`)
+  res.send(`Client IP: ${clientIP}`)
 })
 
 const port = process.env.PORT || 3000
