@@ -5,12 +5,9 @@ workflows:
   heroku_deploy:
     jobs:
       - test_code
-      - heroku/deploy-via-git:
+      - deploy_to_heroku:
           requires:
             - test_code
-          filters:
-            branches:
-              ignore: /^.*$/
 
 jobs:
   test_code:
@@ -24,8 +21,9 @@ jobs:
       - run:
           name: Run tests
           command: npm test
-jobs:
-  heroku/deploy-via-git:
+          when: always
+
+  deploy_to_heroku:
     docker:
       - image: circleci/heroku:1.2.6
     steps:
@@ -42,5 +40,4 @@ jobs:
               - heroku/deploy-via-git
             else
               echo "Application failed to start. Skipping deployment."
-              false
             fi
