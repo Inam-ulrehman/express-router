@@ -6,15 +6,23 @@ workflows:
   heroku_deploy:
     jobs:
       - test_code:
-          name: Run Tests
+          tests_enabled: true
       - heroku/deploy-via-git:
-          name: Deploy to Heroku
-          when: <<pipeline.parameters.tests_passed>>
+          requires:
+            - test_code
+          filters:
+            branches:
+              only: main
 
 jobs:
   test_code:
     docker:
       - image: circleci/node:14
+    parameters:
+      tests_enabled:
+        type: boolean
+        default: true
+        description: 'Enable running tests'
     steps:
       - checkout
       - run:
@@ -22,17 +30,13 @@ jobs:
           command: npm install
       - run:
           name: Run tests
-          command: npm test
-          no_output_timeout: 10m
-          when: <<pipeline.parameters.tests_enabled>>
+          command: npx jest --detectOpenHandles
+      - store_test_results:
+          path: test-results
 
-parameters:
-  tests_enabled:
-    type: boolean
-    default: true
-    description: 'Enable running tests'
-
-  tests_passed:
-    type: boolean
-    default: << pipeline.parameters.tests_enabled >>
-    description: 'Tests passed'
+  heroku/deploy-via-git:
+    executor:
+      name: heroku/default
+    steps:
+      - checkout
+      - heroku/deploy-via-git
