@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   heroku: circleci/heroku@1.2.6
+
 workflows:
   heroku_deploy:
     jobs:
@@ -19,3 +20,6 @@ jobs:
       - run:
           name: Run tests
           command: npm test
+      - run:
+          name: Start server
+          command: npm start
