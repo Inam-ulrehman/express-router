@@ -29,7 +29,7 @@ app.use(cors())
 // Routes
 
 app.get('/', (req, res) => {
-  res.sendStatus(200)
+  res.send(<h1>API is running...</h1>)
 })
 
 app.use('/api/v1/modals', modalRoutes)
