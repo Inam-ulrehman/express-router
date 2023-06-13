@@ -6,6 +6,7 @@ const helmet = require('helmet')
 const cors = require('cors')
 const rateLimiter = require('express-rate-limit')
 const modalRoutes = require('./routes/modalRoutes')
+const morgan = require('morgan')
 const {
   mongooseErrorHandler,
   notFoundErrorHandler,
@@ -14,7 +15,7 @@ const {
 const app = express()
 app.use(express.json())
 
-// extra security packages
+// extra security packages and middleware to prevent attacks
 app.use(sanitizeInput)
 app.set('trust proxy', 1)
 app.use(
@@ -25,11 +26,13 @@ app.use(
 )
 app.use(helmet())
 app.use(cors())
+morgan.token('client-ip', (req) => req.ip)
+app.use(morgan(':client-ip :method :url :response-time ms'))
 
 // Routes
 
 app.get('/', (req, res) => {
-  res.send(<h1>API is running...</h1>)
+  res.send(`<h1>API is running...</h1>`)
 })
 
 app.use('/api/v1/modals', modalRoutes)
