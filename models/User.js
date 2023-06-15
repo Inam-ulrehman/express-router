@@ -121,7 +121,7 @@ userSchema.pre('save', async function () {
   const salt = await bcrypt.genSalt(10)
   this.password = await bcrypt.hash(this.password, salt)
 })
-
+//  JWT token creation
 userSchema.methods.createJWT = async function () {
   const alg = 'HS256'
 
@@ -133,8 +133,10 @@ userSchema.methods.createJWT = async function () {
     .setExpirationTime(process.env.JWT_LIFETIME)
     .sign(new TextEncoder().encode(process.env.JWT_SECRET))
 }
-// password recovery token
-userSchema.methods.recoverJWT = async function () {
+
+//  password reset token
+
+userSchema.methods.createPasswordResetToken = async function () {
   const alg = 'HS256'
 
   return await new jose.SignJWT({ userId: this._id, name: this.name })
@@ -145,6 +147,8 @@ userSchema.methods.recoverJWT = async function () {
     .setExpirationTime('1h')
     .sign(new TextEncoder().encode(process.env.JWT_SECRET))
 }
+
+//  compare password with hashed password
 
 userSchema.methods.comparePassword = async function (candiDatePassword) {
   const isMatch = await bcrypt.compare(candiDatePassword, this.password)

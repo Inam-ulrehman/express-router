@@ -5,11 +5,12 @@ const router = express.Router()
 
 const {
   createUser,
+  LoginUser,
+  recoverPassword,
   getAllUsers,
   getUserById,
   updateUserById,
   deleteUserById,
-  LoginUser,
 } = require('../controllers/userController')
 
 // ==========>>>>>> Create a user
@@ -17,6 +18,9 @@ router.post('/', createUser)
 
 // ==========>>>>>> Login a user
 router.post('/login', LoginUser)
+
+// ==========>>>>>> Recover password
+router.post('/recover', recoverPassword)
 
 // ==========>>>>>> Retrieve all users
 router.get('/', getAllUsers)
