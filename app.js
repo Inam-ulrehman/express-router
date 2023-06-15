@@ -42,7 +42,7 @@ app.use(mongooseErrorHandler)
 app.use(notFoundErrorHandler)
 
 // Database connection and server startup
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 5000
 const startServer = async () => {
   try {
     await connectDB() // Connect to the database
