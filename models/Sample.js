@@ -1,8 +1,8 @@
-// models/modal.js
+// samples/sample.js
 
 const mongoose = require('mongoose')
 
-const modalSchema = new mongoose.Schema({
+const sampleSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -13,6 +13,6 @@ const modalSchema = new mongoose.Schema({
   // Add more fields as needed
 })
 
-const Modal = mongoose.model('Modal', modalSchema)
+const Sample = mongoose.model('Sample', sampleSchema)
 
-module.exports = Modal
+module.exports = Sample

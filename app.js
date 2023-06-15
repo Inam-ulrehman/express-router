@@ -5,7 +5,8 @@ const sanitizeInput = require('./middleware/xss')
 const helmet = require('helmet')
 const cors = require('cors')
 const rateLimiter = require('express-rate-limit')
-const modalRoutes = require('./routes/modalRoutes')
+const sampleRoutes = require('./routes/sampleRoutes')
+const userRoutes = require('./routes/userRoutes')
 const morgan = require('morgan')
 const {
   mongooseErrorHandler,
@@ -35,7 +36,8 @@ app.get('/', (req, res) => {
   res.send(`<h1>API is running...</h1>`)
 })
 
-app.use('/api/v1/modals', modalRoutes)
+app.use('/api/v1/samples', sampleRoutes)
+app.use('/api/v1/users', userRoutes)
 
 // Register the global error handlers
 app.use(mongooseErrorHandler)
