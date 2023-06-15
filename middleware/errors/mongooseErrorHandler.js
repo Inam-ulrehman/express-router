@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes')
-const { CustomAPIError } = require('./customErrors')
+
 // middleware/errorHandlers.js
 
 // Global error handler for Mongoose errors
@@ -8,11 +8,6 @@ const mongooseErrorHandler = (err, req, res, next) => {
     // set default
     statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
     msg: err.message || 'Something went wrong try again later',
-  }
-
-  if (err instanceof CustomAPIError) {
-    customError.statusCode = err.statusCode
-    customError.msg = err.message
   }
 
   if (err.name === 'ValidationError') {
@@ -37,14 +32,6 @@ const mongooseErrorHandler = (err, req, res, next) => {
     .json({ success: false, message: customError.msg })
 }
 
-// Global 404 error handler
-const notFoundErrorHandler = (req, res) => {
-  res
-    .status(StatusCodes.NOT_FOUND)
-    .json({ success: false, message: 'Invalid URL' })
-}
-
 module.exports = {
   mongooseErrorHandler,
-  notFoundErrorHandler,
 }

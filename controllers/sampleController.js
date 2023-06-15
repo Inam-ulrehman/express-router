@@ -2,10 +2,6 @@
 
 const { StatusCodes } = require('http-status-codes')
 const Sample = require('../models/Sample')
-const {
-  ResourceNotFoundError,
-  BodyNotFoundError,
-} = require('../middleware/errors/customErrors')
 
 // Create operation
 const createSample = async (req, res, next) => {
@@ -41,7 +37,9 @@ const getSampleById = async (req, res, next) => {
     const { id } = req.params
     const sample = await Sample.findById(id)
     if (!sample) {
-      throw new ResourceNotFoundError('Sample not found')
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ success: false, message: 'Sample not found', result: sample })
     }
     res
       .status(StatusCodes.OK)
@@ -57,7 +55,10 @@ const updateSampleById = async (req, res, next) => {
     const { id } = req.params
     const { name } = req.body
     if (!name) {
-      throw new BodyNotFoundError('Name is required')
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ success: false, message: 'Please provide name' })
+      return
     }
     const sample = await Sample.findByIdAndUpdate(id, { name }, { new: true })
     if (!sample) {
@@ -80,7 +81,9 @@ const deleteSampleById = async (req, res, next) => {
     const { id } = req.params
     const sample = await Sample.findByIdAndDelete(id)
     if (!sample) {
-      throw new ResourceNotFoundError(`Sample with id ${id} not found`)
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ success: false, message: 'Sample not found', result: sample })
     }
     res
       .status(StatusCodes.OK)

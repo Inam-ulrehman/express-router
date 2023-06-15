@@ -11,7 +11,7 @@ const morgan = require('morgan')
 const {
   mongooseErrorHandler,
   notFoundErrorHandler,
-} = require('./middleware/errors/errorHandlers')
+} = require('./middleware/errors')
 
 const app = express()
 app.use(express.json())
@@ -27,8 +27,8 @@ app.use(
 )
 app.use(helmet())
 app.use(cors())
-morgan.token('client-ip', (req) => req.ip)
-app.use(morgan(':client-ip :method :url :response-time ms'))
+// morgan.token('client-ip', (req) => req.ip)
+// app.use(morgan(':client-ip :method :url :response-time ms'))
 
 // Routes
 

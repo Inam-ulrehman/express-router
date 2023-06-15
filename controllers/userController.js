@@ -3,27 +3,51 @@
 const { StatusCodes } = require('http-status-codes')
 const User = require('../models/User')
 
-const {
-  ResourceNotFoundError,
-  BodyNotFoundError,
-} = require('../middleware/errors/customErrors')
-
-// Create operation
+// ==========>>>>>> Create operation - create a user
 const createUser = async (req, res, next) => {
+  const { name, email, password } = req.body
+  const isFirstAccount = await User.countDocuments({})
+  const role = isFirstAccount === 0 ? 'admin' : 'user'
   try {
-    const { name } = req.body
-    const user = await User.create({ name })
+    const user = await User.create({ name, email, password, role })
+    const token = await user.createJWT()
     res.status(StatusCodes.CREATED).json({
       success: true,
       message: 'User created successfully',
-      result: user,
+      role: user.role,
+      name: user.name,
+      token,
     })
   } catch (err) {
     next(err)
   }
 }
 
-// Read operation: Get all users
+// ==========>>>>>> login operation - login user
+
+const LoginUser = async (req, res, next) => {
+  const { email, password } = req.body
+  const user = await User.findOne({ email })
+
+  if (!user) {
+    return res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ success: false, message: 'Invalid credentials' })
+  }
+  const isPasswordCorrect = await user.comparePassword(password)
+  if (!isPasswordCorrect) {
+    return res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ success: false, message: 'Invalid credentials' })
+  }
+  const token = await user.createJWT()
+
+  res
+    .status(StatusCodes.OK)
+    .json({ success: true, role: user.role, name: user.name, token })
+}
+
+// ==========>>>>>> Read operation: Get all users
 const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find()
@@ -36,13 +60,15 @@ const getAllUsers = async (req, res, next) => {
   }
 }
 
-// Read operation: Get a user by ID
+// ==========>>>>>> Read operation: Get a user by ID
 const getUserById = async (req, res, next) => {
   try {
     const { id } = req.params
     const user = await User.findById(id)
     if (!user) {
-      throw new ResourceNotFoundError('User not found')
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ success: false, message: 'User not found', result: user })
     }
     res
       .status(StatusCodes.OK)
@@ -52,13 +78,16 @@ const getUserById = async (req, res, next) => {
   }
 }
 
-// Update operation: Update a user by ID
+// ==========>>>>>> Update operation: Update a user by ID
 const updateUserById = async (req, res, next) => {
   try {
     const { id } = req.params
     const { name } = req.body
     if (!name) {
-      throw new BodyNotFoundError('Name is required')
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ success: false, message: 'Please provide name' })
+      return
     }
     const user = await User.findByIdAndUpdate(id, { name }, { new: true })
     if (!user) {
@@ -73,13 +102,16 @@ const updateUserById = async (req, res, next) => {
   }
 }
 
-// Delete operation: Delete a user by ID
+// ==========>>>>>> Delete operation: Delete a user by ID
 const deleteUserById = async (req, res, next) => {
   try {
     const { id } = req.params
     const user = await User.findByIdAndDelete(id)
     if (!user) {
-      throw new ResourceNotFoundError(`User with id ${id} not found`)
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ success: false, message: 'User not found', result: user })
+      return
     }
     res
       .status(StatusCodes.OK)
@@ -95,4 +127,5 @@ module.exports = {
   getUserById,
   updateUserById,
   deleteUserById,
+  LoginUser,
 }
