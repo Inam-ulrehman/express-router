@@ -11,6 +11,7 @@ const {
   getUserById,
   updateUserById,
   deleteUserById,
+  deleteMultipleUsers,
 } = require('../controllers/userController')
 const { authenticateUser } = require('../middleware/auth/userAuth')
 const { authenticateAdmin } = require('../middleware/auth/adminAuth')
@@ -35,5 +36,8 @@ router.put('/:id', authenticateUser, updateUserById)
 
 // ==========>>>>>> Delete a user by ID (admin only)
 router.delete('/:id', authenticateAdmin, deleteUserById)
+
+// ==========>>>>>> Delete multiple users by ID array in body (admin only)
+router.patch('/', authenticateAdmin, deleteMultipleUsers)
 
 module.exports = router

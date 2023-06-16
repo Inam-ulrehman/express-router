@@ -246,6 +246,39 @@ const deleteUserById = async (req, res, next) => {
   }
 }
 
+// ==========>>>>>> Delete operation: Delete multiple users by ID array in body
+
+const deleteMultipleUsers = async (req, res, next) => {
+  let { userIds } = req.body
+  userIds = userIds.split(',')
+
+  try {
+    // Exclude users with the "admin" role
+    const result = await User.deleteMany({
+      _id: { $in: userIds },
+      role: { $ne: 'admin' },
+    })
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No users found with the given IDs',
+        result: result,
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Users deleted successfully',
+      result: result,
+    })
+  } catch (error) {
+    next(error) // Pass errors to Express.
+  }
+}
+
+// ==========>>>>>> Export module
+
 module.exports = {
   createUser,
   LoginUser,
@@ -254,4 +287,5 @@ module.exports = {
   getUserById,
   updateUserById,
   deleteUserById,
+  deleteMultipleUsers,
 }
