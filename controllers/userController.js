@@ -201,10 +201,10 @@ const updateUserById = async (req, res, next) => {
         postalCode,
         verified,
       },
-      { runValidators: true },
-      { new: true }
+      { new: true },
+      { runValidators: true }
     )
-    // user.password = undefined
+    user.password = undefined
 
     res
       .status(StatusCodes.OK)
