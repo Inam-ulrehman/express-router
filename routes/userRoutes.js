@@ -13,6 +13,7 @@ const {
   deleteUserById,
 } = require('../controllers/userController')
 const { authenticateUser } = require('../middleware/auth/userAuth')
+const { authenticateAdmin } = require('../middleware/auth/adminAuth')
 
 // ==========>>>>>> Create a user
 router.post('/', createUser)
@@ -24,7 +25,7 @@ router.post('/login', LoginUser)
 router.post('/recover', recoverPassword)
 
 // ==========>>>>>> Retrieve all users
-router.get('/', getAllUsers)
+router.get('/', authenticateAdmin, getAllUsers)
 
 // ==========>>>>>> Retrieve a user by ID
 router.get('/:id', authenticateUser, getUserById)
