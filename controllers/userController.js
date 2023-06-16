@@ -216,18 +216,31 @@ const updateUserById = async (req, res, next) => {
 
 // ==========>>>>>> Delete operation: Delete a user by ID
 const deleteUserById = async (req, res, next) => {
+  // rule: only admin can delete user & admin can't delete himself or herself
+
   try {
     const { id } = req.params
-    const user = await User.findByIdAndDelete(id)
+    const user = await User.findById(id)
     if (!user) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ success: false, message: 'User not found', result: user })
-      return
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: `No item found with this ID ${id}`,
+        result: user,
+      })
     }
+
+    if (user?.role === 'admin') {
+      return res.status(StatusCodes.UNAUTHORIZED).json({
+        success: false,
+        message: 'Not authorized to access this route',
+        result: 'Admin can not delete himself or herself',
+      })
+    }
+
+    const result = await User.findByIdAndDelete(id)
     res
       .status(StatusCodes.OK)
-      .json({ success: true, message: 'Deleted!', result: user })
+      .json({ success: true, message: 'Deleted!', result })
   } catch (err) {
     next(err)
   }

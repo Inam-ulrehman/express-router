@@ -16,24 +16,24 @@ const { authenticateUser } = require('../middleware/auth/userAuth')
 const { authenticateAdmin } = require('../middleware/auth/adminAuth')
 
 // ==========>>>>>> Create a user
-router.post('/', createUser)
+router.post('/', createUser) // No authentication required
 
-// ==========>>>>>> Login a user
-router.post('/login', LoginUser)
+// ==========>>>>>> Login a user (admin & user)
+router.post('/login', LoginUser) // No authentication required
 
-// ==========>>>>>> Recover password
-router.post('/recover', recoverPassword)
+// ==========>>>>>> Recover password (forgot password)
+router.post('/recover', recoverPassword) // No authentication required
 
-// ==========>>>>>> Retrieve all users
+// ==========>>>>>> Retrieve all users (admin only)
 router.get('/', authenticateAdmin, getAllUsers)
 
-// ==========>>>>>> Retrieve a user by ID
+// ==========>>>>>> Retrieve a user by ID  (admin & user)
 router.get('/:id', authenticateUser, getUserById)
 
-// ==========>>>>>> Update a user by ID
+// ==========>>>>>> Update a user by ID (admin & user)
 router.put('/:id', authenticateUser, updateUserById)
 
-// ==========>>>>>> Delete a user by ID
-router.delete('/:id', deleteUserById)
+// ==========>>>>>> Delete a user by ID (admin only)
+router.delete('/:id', authenticateAdmin, deleteUserById)
 
 module.exports = router
