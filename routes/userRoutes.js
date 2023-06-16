@@ -31,7 +31,7 @@ router.get('/', authenticateAdmin, getAllUsers)
 router.get('/:id', authenticateUser, getUserById)
 
 // ==========>>>>>> Update a user by ID
-router.put('/:id', updateUserById)
+router.put('/:id', authenticateUser, updateUserById)
 
 // ==========>>>>>> Delete a user by ID
 router.delete('/:id', deleteUserById)

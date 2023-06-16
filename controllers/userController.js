@@ -2,6 +2,7 @@
 
 const { StatusCodes } = require('http-status-codes')
 const User = require('../models/User')
+var bcrypt = require('bcryptjs')
 const {
   sendPasswordResetEmail,
 } = require('../lib/sendGrid/sendPasswordResetEmail')
@@ -128,22 +129,85 @@ const getUserById = async (req, res, next) => {
 
 // ==========>>>>>> Update operation: Update a user by ID
 const updateUserById = async (req, res, next) => {
+  const { id } = req.params
+  const { userId } = req.user
+  // check if params and token id are same or user is admin then only allow to access this route
+
+  if (id !== userId && req.user.role !== 'admin') {
+    return res.status(StatusCodes.UNAUTHORIZED).json({
+      success: false,
+      message: 'Not authorized to access this route',
+      result: 'Token Id is different then params Id',
+    })
+  }
+  let {
+    name,
+    lastName,
+    mobile,
+    email,
+    password,
+    role,
+    gender,
+    dob,
+    active,
+    location,
+    apartment,
+    house,
+    street,
+    city,
+    province,
+    country,
+    postalCode,
+    verified,
+  } = req.body
+
+  // check if user want to update password then hash it and update it
+
+  if (password) {
+    const salt = await bcrypt.genSalt(10)
+    password = await bcrypt.hash(password, salt)
+  }
+
+  // check if user want to change role then check if user is admin then only allow to change role
+
+  if (role && req.user.role !== 'admin') {
+    return res.status(StatusCodes.UNAUTHORIZED).json({
+      success: false,
+      message: 'Not authorized to access this route',
+      result: 'Only admin can change role',
+    })
+  }
+  // update user
   try {
-    const { id } = req.params
-    const { name } = req.body
-    if (!name) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ success: false, message: 'Please provide name' })
-      return
-    }
-    const user = await User.findByIdAndUpdate(id, { name }, { new: true })
-    if (!user) {
-      res.status(StatusCodes.BAD_REQUEST).json({ error: 'User not found' })
-      return
-    }
+    const user = await User.findByIdAndUpdate(
+      { _id: id },
+      {
+        name,
+        lastName,
+        mobile,
+        email,
+        password,
+        role,
+        gender,
+        dob,
+        active,
+        location,
+        apartment,
+        house,
+        street,
+        city,
+        province,
+        country,
+        postalCode,
+        verified,
+      },
+      { runValidators: true },
+      { new: true }
+    )
+    // user.password = undefined
+
     res
-      .status(StatusCodes.ACCEPTED)
+      .status(StatusCodes.OK)
       .json({ success: true, message: 'Updated!', result: user })
   } catch (err) {
     next(err)

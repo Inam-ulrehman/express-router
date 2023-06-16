@@ -41,7 +41,10 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
+      enum: ['user', 'admin'],
       default: 'user',
+      lowercase: true,
+      trim: true,
     },
     gender: {
       type: String,
@@ -122,6 +125,7 @@ userSchema.pre('save', async function () {
   const salt = await bcrypt.genSalt(10)
   this.password = await bcrypt.hash(this.password, salt)
 })
+
 //  JWT token creation
 userSchema.methods.createJWT = async function () {
   const alg = 'HS256'
