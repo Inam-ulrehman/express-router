@@ -12,6 +12,7 @@ const {
   updateUserById,
   deleteUserById,
 } = require('../controllers/userController')
+const { authenticateUser } = require('../middleware/auth/userAuth')
 
 // ==========>>>>>> Create a user
 router.post('/', createUser)
@@ -26,7 +27,7 @@ router.post('/recover', recoverPassword)
 router.get('/', getAllUsers)
 
 // ==========>>>>>> Retrieve a user by ID
-router.get('/:id', getUserById)
+router.get('/:id', authenticateUser, getUserById)
 
 // ==========>>>>>> Update a user by ID
 router.put('/:id', updateUserById)

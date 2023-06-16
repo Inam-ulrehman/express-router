@@ -53,6 +53,7 @@ const userSchema = new mongoose.Schema(
       type: Date,
       trim: true,
     },
+    active: { type: Boolean, default: true },
     location: {
       type: {
         type: String,
