@@ -214,6 +214,27 @@ const updateUserById = async (req, res, next) => {
   }
 }
 
+// ==========>>>>>> Update operation: Update password by token (reset password) by link sent to email
+const updatePasswordByToken = async (req, res, next) => {
+  const { userId } = req.user
+  const { password } = req.body
+
+  const salt = await bcrypt.genSalt(10)
+  const hashedPassword = await bcrypt.hash(password, salt)
+  try {
+    const user = await User.findByIdAndUpdate(
+      { _id: userId },
+      { password: hashedPassword },
+      { runValidators: true }
+    )
+    res
+      .status(StatusCodes.OK)
+      .json({ success: true, message: 'Updated!', result: 'completed' })
+  } catch (err) {
+    next(err)
+  }
+}
+
 // ==========>>>>>> Delete operation: Delete a user by ID
 const deleteUserById = async (req, res, next) => {
   // rule: only admin can delete user & admin can't delete himself or herself
@@ -288,4 +309,5 @@ module.exports = {
   updateUserById,
   deleteUserById,
   deleteMultipleUsers,
+  updatePasswordByToken,
 }

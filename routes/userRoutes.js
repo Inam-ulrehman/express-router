@@ -12,6 +12,7 @@ const {
   updateUserById,
   deleteUserById,
   deleteMultipleUsers,
+  updatePasswordByToken,
 } = require('../controllers/userController')
 const { authenticateUser } = require('../middleware/auth/userAuth')
 const { authenticateAdmin } = require('../middleware/auth/adminAuth')
@@ -24,6 +25,10 @@ router.post('/login', LoginUser) // No authentication required
 
 // ==========>>>>>> Recover password (forgot password)
 router.post('/recover', recoverPassword) // No authentication required
+
+// ==========>>>>>> Reset password by token (reset password) (admin & user)
+
+router.put('/reset', authenticateUser, updatePasswordByToken)
 
 // ==========>>>>>> Retrieve all users (admin only)
 router.get('/', authenticateAdmin, getAllUsers)
