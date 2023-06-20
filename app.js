@@ -7,16 +7,18 @@ const cors = require('cors')
 const rateLimiter = require('express-rate-limit')
 const sampleRoutes = require('./routes/sampleRoutes')
 const userRoutes = require('./routes/userRoutes')
+const authenticateUserTokenRoute = require('./routes/singleActions/authenticateUserTokenRoute')
 const morgan = require('morgan')
 const {
   mongooseErrorHandler,
   notFoundErrorHandler,
 } = require('./middleware/errors')
 
+// =================== Setup start here ===================
 const app = express()
 app.use(express.json())
 
-// extra security packages and middleware to prevent attacks
+// =================== Middleware ===================
 app.use(sanitizeInput)
 app.set('trust proxy', 1)
 app.use(
@@ -30,20 +32,24 @@ app.use(cors())
 // morgan.token('client-ip', (req) => req.ip)
 // app.use(morgan(':client-ip :method :url :response-time ms'))
 
-// Routes
+// =================== Routes ===================
 
 app.get('/', (req, res) => {
   res.send(`<h1>API is running...</h1>`)
 })
 
+// =================== Multiple Action Api Routes ===================
 app.use('/api/v1/samples', sampleRoutes)
 app.use('/api/v1/users', userRoutes)
 
-// Register the global error handlers
+//  =================== Single Action Routes ===================
+app.use('/api/v1/authenticateUserToken', authenticateUserTokenRoute)
+
+// =================== Error Handlers ===================
 app.use(mongooseErrorHandler)
 app.use(notFoundErrorHandler)
 
-// Database connection and server startup
+// =================== Server and Database ===================
 const port = process.env.PORT || 5000
 const startServer = async () => {
   try {
