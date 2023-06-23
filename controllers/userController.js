@@ -104,6 +104,69 @@ const getUserByToken = async (req, res, next) => {
   }
 }
 
+// ==========>>>>>> Update User Profile by token
+const updateUserProfileByToken = async (req, res, next) => {
+  const { userId } = req.user
+  let {
+    name,
+    lastName,
+    mobile,
+    email,
+    password,
+    gender,
+    dob,
+    location,
+    apartment,
+    house,
+    street,
+    city,
+    province,
+    country,
+    postalCode,
+    verified,
+  } = req.body
+
+  // check if user want to update password then hash it and update it
+
+  if (password) {
+    const salt = await bcrypt.genSalt(10)
+    password = await bcrypt.hash(password, salt)
+  }
+  // update user
+  try {
+    const user = await User.findByIdAndUpdate(
+      { _id: userId },
+      {
+        name,
+        lastName,
+        mobile,
+        email,
+        password,
+        gender,
+        dob,
+        location,
+        apartment,
+        house,
+        street,
+        city,
+        province,
+        country,
+        postalCode,
+        verified,
+      },
+      { new: true },
+      { runValidators: true }
+    )
+    user.password = undefined
+
+    res
+      .status(StatusCodes.OK)
+      .json({ success: true, message: 'Updated!', result: user })
+  } catch (err) {
+    next(err)
+  }
+}
+
 // ==========>>>>>> Read operation: Get all users admin only
 const getAllUsers = async (req, res, next) => {
   try {
@@ -319,11 +382,12 @@ module.exports = {
   createUser,
   LoginUser,
   recoverPassword,
+  getUserByToken,
+  updateUserProfileByToken,
   getAllUsers,
   getUserById,
   updateUserById,
   deleteUserById,
   deleteMultipleUsers,
   updatePasswordByToken,
-  getUserByToken,
 }
