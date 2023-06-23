@@ -18,7 +18,7 @@ const createUser = async (req, res, next) => {
     const token = await user.createJWT()
     res.status(StatusCodes.CREATED).json({
       success: true,
-      message: 'User created successfully',
+      message: 'User created successfully!',
       role: user.role,
       name: user.name,
       token,
@@ -39,7 +39,7 @@ const LoginUser = async (req, res, next) => {
   if (!user) {
     return res
       .status(StatusCodes.UNAUTHORIZED)
-      .json({ success: false, message: 'Invalid credentials' })
+      .json({ success: false, message: 'Invalid credentials!' })
   }
   const isPasswordCorrect = await user.comparePassword(password)
 
@@ -48,7 +48,7 @@ const LoginUser = async (req, res, next) => {
   if (!isPasswordCorrect) {
     return res
       .status(StatusCodes.UNAUTHORIZED)
-      .json({ success: false, message: 'Invalid credentials' })
+      .json({ success: false, message: 'Invalid credentials!' })
   }
   //  create token and send to client
 
@@ -68,7 +68,7 @@ const recoverPassword = async (req, res, next) => {
   if (!user) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ success: false, message: 'User not found', result: user })
+      .json({ success: false, message: 'User not found!', result: user })
   }
   //  create token and send to client
 
@@ -80,12 +80,12 @@ const recoverPassword = async (req, res, next) => {
   if (emailSent) {
     res.status(200).json({
       success: true,
-      message: 'Password reset email sent successfully',
+      message: 'Password reset email sent successfully!',
     })
   } else {
     res.status(500).json({
       success: false,
-      message: 'Failed to send password reset email SendGrid Error',
+      message: 'Failed to send password reset email SendGrid Error!',
     })
   }
 }
@@ -98,7 +98,7 @@ const getUserByToken = async (req, res, next) => {
     const user = await User.findById(userId, '-password')
     res
       .status(StatusCodes.OK)
-      .json({ success: true, message: 'Single User ', result: user })
+      .json({ success: true, message: 'Single User!', result: user })
   } catch (err) {
     next(err)
   }
@@ -159,9 +159,11 @@ const updateUserProfileByToken = async (req, res, next) => {
     )
     user.password = undefined
 
-    res
-      .status(StatusCodes.OK)
-      .json({ success: true, message: 'Updated!', result: user })
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Profile updated successfully!',
+      result: user,
+    })
   } catch (err) {
     next(err)
   }
@@ -188,7 +190,7 @@ const getUserById = async (req, res, next) => {
   if (req.params.id !== req.user.userId && req.user.role !== 'admin') {
     return res.status(StatusCodes.UNAUTHORIZED).json({
       success: false,
-      message: 'Not authorized to access this route',
+      message: 'Not authorized to access this route!',
       result: 'Token Id is different then params Id',
     })
   }
@@ -214,7 +216,7 @@ const updateUserById = async (req, res, next) => {
   if (id !== userId && req.user.role !== 'admin') {
     return res.status(StatusCodes.UNAUTHORIZED).json({
       success: false,
-      message: 'Not authorized to access this route',
+      message: 'Not authorized to access this route!',
       result: 'Token Id is different then params Id',
     })
   }
@@ -251,7 +253,7 @@ const updateUserById = async (req, res, next) => {
   if (role && req.user.role !== 'admin') {
     return res.status(StatusCodes.UNAUTHORIZED).json({
       success: false,
-      message: 'Not authorized to access this route',
+      message: 'Not authorized to access this route!',
       result: 'Only admin can change role',
     })
   }
@@ -284,9 +286,11 @@ const updateUserById = async (req, res, next) => {
     )
     user.password = undefined
 
-    res
-      .status(StatusCodes.OK)
-      .json({ success: true, message: 'Updated!', result: user })
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Profile updated successfully!',
+      result: user,
+    })
   } catch (err) {
     next(err)
   }
@@ -305,9 +309,11 @@ const updatePasswordByToken = async (req, res, next) => {
       { password: hashedPassword },
       { runValidators: true }
     )
-    res
-      .status(StatusCodes.OK)
-      .json({ success: true, message: 'Updated!', result: 'completed' })
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Password updated successfully!',
+      result: 'completed',
+    })
   } catch (err) {
     next(err)
   }
@@ -323,7 +329,7 @@ const deleteUserById = async (req, res, next) => {
     if (!user) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
-        message: `No item found with this ID ${id}`,
+        message: `No item found with this ID ${id}!`,
         result: user,
       })
     }
@@ -331,15 +337,17 @@ const deleteUserById = async (req, res, next) => {
     if (user?.role === 'admin') {
       return res.status(StatusCodes.UNAUTHORIZED).json({
         success: false,
-        message: 'Not authorized to access this route',
+        message: 'Not authorized to access this route!',
         result: 'Admin can not delete himself or herself',
       })
     }
 
     const result = await User.findByIdAndDelete(id)
-    res
-      .status(StatusCodes.OK)
-      .json({ success: true, message: 'Deleted!', result })
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Deleted successfully!',
+      result,
+    })
   } catch (err) {
     next(err)
   }
@@ -361,14 +369,14 @@ const deleteMultipleUsers = async (req, res, next) => {
     if (result.deletedCount === 0) {
       return res.status(404).json({
         success: false,
-        message: 'No users found with the given IDs',
+        message: 'No users found with the given IDs!',
         result: result,
       })
     }
 
     res.status(200).json({
       success: true,
-      message: 'Users deleted successfully',
+      message: 'Users deleted successfully!',
       result: result,
     })
   } catch (error) {

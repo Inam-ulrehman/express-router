@@ -10,7 +10,7 @@ const authenticateUser = async (req, res, next) => {
   if (!authHeader || !authHeader.startsWith('Bearer')) {
     return res
       .status(StatusCodes.UNAUTHORIZED)
-      .json({ success: false, message: 'Bearer token is missing' })
+      .json({ success: false, message: 'Bearer token is missing!' })
   }
 
   // get token from auth header
@@ -30,7 +30,7 @@ const authenticateUser = async (req, res, next) => {
     if (!user) {
       return res
         .status(StatusCodes.UNAUTHORIZED)
-        .json({ success: false, message: 'User not found', result: user })
+        .json({ success: false, message: 'User not found!', result: user })
     }
 
     //  check if user is active or not
@@ -38,7 +38,7 @@ const authenticateUser = async (req, res, next) => {
     if (!user.active) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
         success: false,
-        message: 'Your account is Deactivated',
+        message: 'Your account is Deactivated!',
         result: 'User is not active',
       })
     }
@@ -47,7 +47,7 @@ const authenticateUser = async (req, res, next) => {
   } catch (error) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
       success: false,
-      message: 'Not authorized to access this route',
+      message: 'Not authorized to access this route!',
       result: error?.code,
     })
   }
