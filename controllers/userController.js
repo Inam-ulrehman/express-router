@@ -90,7 +90,21 @@ const recoverPassword = async (req, res, next) => {
   }
 }
 
-// ==========>>>>>> Read operation: Get all users
+// ==========>>>>>> get user by token
+const getUserByToken = async (req, res, next) => {
+  const { userId } = req.user
+
+  try {
+    const user = await User.findById(userId, '-password')
+    res
+      .status(StatusCodes.OK)
+      .json({ success: true, message: 'Single User ', result: user })
+  } catch (err) {
+    next(err)
+  }
+}
+
+// ==========>>>>>> Read operation: Get all users admin only
 const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find()
@@ -103,8 +117,9 @@ const getAllUsers = async (req, res, next) => {
   }
 }
 
-// ==========>>>>>> Read operation: Get a user by ID
+// ==========>>>>>> Read operation: Get a user by ID admin only
 const getUserById = async (req, res, next) => {
+  console.log('updateUserById')
   // check if params and token id are same or user is admin then only allow to access this route
 
   if (req.params.id !== req.user.userId && req.user.role !== 'admin') {
@@ -127,7 +142,7 @@ const getUserById = async (req, res, next) => {
   }
 }
 
-// ==========>>>>>> Update operation: Update a user by ID
+// ==========>>>>>> Update operation: Update a user by ID admin only
 const updateUserById = async (req, res, next) => {
   const { id } = req.params
   const { userId } = req.user
@@ -267,7 +282,7 @@ const deleteUserById = async (req, res, next) => {
   }
 }
 
-// ==========>>>>>> Delete operation: Delete multiple users by ID array in body
+// ==========>>>>>> Delete operation: Delete multiple users by ID array in body admin only
 
 const deleteMultipleUsers = async (req, res, next) => {
   let { userIds } = req.body
@@ -310,4 +325,5 @@ module.exports = {
   deleteUserById,
   deleteMultipleUsers,
   updatePasswordByToken,
+  getUserByToken,
 }
