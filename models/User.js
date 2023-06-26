@@ -96,6 +96,12 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    region: {
+      type: String,
+      maxlength: 100,
+      lowercase: true,
+      trim: true,
+    },
     province: {
       type: String,
       maxlength: 50,
