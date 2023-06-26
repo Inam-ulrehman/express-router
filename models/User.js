@@ -57,6 +57,10 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
     active: { type: Boolean, default: true },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
     location: {
       type: {
         type: String,
@@ -113,10 +117,6 @@ const userSchema = new mongoose.Schema(
 
     recoveryToken: {
       type: String,
-    },
-    verified: {
-      type: Boolean,
-      default: false,
     },
   },
   { timestamps: true }
