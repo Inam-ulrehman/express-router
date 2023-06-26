@@ -132,6 +132,9 @@ const updateUserProfileByToken = async (req, res, next) => {
     const salt = await bcrypt.genSalt(10)
     password = await bcrypt.hash(password, salt)
   }
+  if (location) {
+    location = JSON.parse(location)
+  }
   // update user
   try {
     const user = await User.findByIdAndUpdate(
@@ -144,14 +147,13 @@ const updateUserProfileByToken = async (req, res, next) => {
         password,
         gender,
         dob,
-        location,
         apartment,
         house,
         street,
         city,
         province,
         country,
-        postalCode,
+        location,
         verified,
       },
       { new: true },
