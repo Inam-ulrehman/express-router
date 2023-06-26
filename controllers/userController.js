@@ -155,6 +155,7 @@ const updateUserProfileByToken = async (req, res, next) => {
         region,
         province,
         country,
+        postalCode,
         location,
         verified,
       },
