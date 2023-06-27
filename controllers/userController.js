@@ -180,6 +180,7 @@ const getAllUsers = async (req, res, next) => {
     const searchQuery = req.query.search // Get the search query from the request query parameters
     const page = parseInt(req.query.page) || 1 // Get the page number from the request query parameters, default is 1
     const limit = parseInt(req.query.limit) || 10 // Get the limit from the request query parameters, default is 10
+    const sort = req.query.sort || '-createdAt' // Get the sort parameter from the request query parameters, default is -createdAt
 
     // Create a regex pattern to match the search query case-insensitively
     const regexPattern = new RegExp(searchQuery, 'i')
@@ -198,7 +199,10 @@ const getAllUsers = async (req, res, next) => {
 
     const offset = (page - 1) * limit // Calculate the offset based on the page and limit
 
-    const users = await User.find(query).skip(offset).limit(limit)
+    const users = await User.find(query)
+      .sort(sort) // Sort the users based on the provided sort parameter
+      .skip(offset)
+      .limit(limit)
 
     res.status(200).json({
       success: true,
@@ -209,31 +213,6 @@ const getAllUsers = async (req, res, next) => {
       currentPage: page,
       result: users,
     })
-  } catch (err) {
-    next(err)
-  }
-}
-
-// ==========>>>>>> Read operation: Get a user by ID admin only
-const getUserById = async (req, res, next) => {
-  console.log('updateUserById')
-  // check if params and token id are same or user is admin then only allow to access this route
-
-  if (req.params.id !== req.user.userId && req.user.role !== 'admin') {
-    return res.status(StatusCodes.UNAUTHORIZED).json({
-      success: false,
-      message: 'Not authorized to access this route!',
-      result: 'Token Id is different then params Id',
-    })
-  }
-
-  try {
-    const { id } = req.params
-    const user = await User.findById(id, '-password')
-
-    res
-      .status(StatusCodes.OK)
-      .json({ success: true, message: 'Single User ', result: user })
   } catch (err) {
     next(err)
   }
