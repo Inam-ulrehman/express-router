@@ -15,12 +15,13 @@ const createUser = async (req, res, next) => {
   const role = isFirstAccount === 0 ? 'admin' : 'user'
   try {
     const user = await User.create({ firstName, email, password, role })
+    const { role, firstName } = user
     const token = await user.createJWT()
     res.status(StatusCodes.CREATED).json({
       success: true,
       message: 'User created successfully!',
-      role: user.role,
-      firstName: user.firstName,
+      role,
+      firstName,
       token,
     })
   } catch (err) {
