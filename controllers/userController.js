@@ -9,18 +9,18 @@ const {
 
 // ==========>>>>>> Create operation - create a user
 const createUser = async (req, res, next) => {
-  const { name, email, password } = req.body
+  const { firstName, email, password } = req.body
   //  check if user count is 0 then role will be admin else user
   const isFirstAccount = await User.countDocuments({})
   const role = isFirstAccount === 0 ? 'admin' : 'user'
   try {
-    const user = await User.create({ name, email, password, role })
+    const user = await User.create({ firstName, email, password, role })
     const token = await user.createJWT()
     res.status(StatusCodes.CREATED).json({
       success: true,
       message: 'User created successfully!',
       role: user.role,
-      name: user.name,
+      firstName: user.firstName,
       token,
     })
   } catch (err) {
