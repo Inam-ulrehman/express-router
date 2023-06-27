@@ -177,11 +177,38 @@ const updateUserProfileByToken = async (req, res, next) => {
 // ==========>>>>>> Read operation: Get all users admin only
 const getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find()
-    const count = await User.countDocuments()
-    res
-      .status(200)
-      .json({ success: true, message: 'All users', count, result: users })
+    const searchQuery = req.query.search // Get the search query from the request query parameters
+    const page = parseInt(req.query.page) || 1 // Get the page number from the request query parameters, default is 1
+    const limit = parseInt(req.query.limit) || 10 // Get the limit from the request query parameters, default is 10
+
+    // Create a regex pattern to match the search query case-insensitively
+    const regexPattern = new RegExp(searchQuery, 'i')
+
+    const query = {
+      $or: [
+        { name: regexPattern },
+        { lastName: regexPattern },
+        { email: regexPattern },
+        { mobile: regexPattern },
+      ],
+    }
+    const totalCount = await User.countDocuments(query) // Get the total count of matching users
+
+    const totalPages = Math.ceil(totalCount / limit) // Calculate the total number of pages based on the limit
+
+    const offset = (page - 1) * limit // Calculate the offset based on the page and limit
+
+    const users = await User.find(query).skip(offset).limit(limit)
+
+    res.status(200).json({
+      success: true,
+      message: 'All users',
+      totalCount,
+      countOnPage: users.length,
+      totalPages,
+      currentPage: page,
+      result: users,
+    })
   } catch (err) {
     next(err)
   }
