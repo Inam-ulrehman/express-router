@@ -116,7 +116,7 @@ const userSchema = new mongoose.Schema(
       type: Date,
       trim: true,
     },
-    active: { type: Boolean, default: true },
+    active: { type: Boolean, default: false },
     verified: {
       type: Boolean,
       default: false,
