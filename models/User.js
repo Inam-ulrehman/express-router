@@ -1,77 +1,9 @@
 const mongoose = require('mongoose')
-var bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs')
 const jose = require('jose')
-const userSchema = new mongoose.Schema(
+
+const addressSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: [true, 'Please provide name'],
-      maxlength: 50,
-      minlength: 3,
-      lowercase: true,
-      trim: true,
-    },
-    lastName: {
-      type: String,
-      maxlength: 50,
-      lowercase: true,
-      trim: true,
-    },
-    mobile: {
-      type: String,
-      maxlength: 50,
-    },
-    email: {
-      type: String,
-      required: [true, 'Please provide email'],
-      match: [
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        'Please provide a valid email',
-      ],
-      unique: true,
-      lowercase: true,
-      trim: true,
-      maxlength: 100,
-      minlength: 8,
-    },
-    password: {
-      type: String,
-      required: [true, 'Please provide password'],
-      minlength: 8,
-    },
-    role: {
-      type: String,
-      enum: ['user', 'admin'],
-      default: 'user',
-      lowercase: true,
-      trim: true,
-    },
-    gender: {
-      type: String,
-      enum: ['male', 'female', 'other'],
-      lowercase: true,
-      trim: true,
-    },
-    dob: {
-      type: Date,
-      trim: true,
-    },
-    active: { type: Boolean, default: true },
-    verified: {
-      type: Boolean,
-      default: false,
-    },
-    location: {
-      type: {
-        type: String,
-        enum: ['Point'],
-        default: 'Point',
-      },
-      coordinates: {
-        type: [{ type: Number }],
-        required: true,
-      },
-    },
     apartment: {
       type: String,
       maxlength: 50,
@@ -120,13 +52,94 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+  },
+  { _id: false }
+)
 
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, 'Please provide name'],
+      maxlength: 20,
+      minlength: 3,
+      lowercase: true,
+      trim: true,
+    },
+    lastName: {
+      type: String,
+      maxlength: 20,
+      lowercase: true,
+      trim: true,
+    },
+    cellPhone: {
+      type: String,
+      maxlength: 20,
+    },
+    homePhone: {
+      type: String,
+      maxlength: 20,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: [true, 'Please provide email'],
+      match: [
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        'Please provide a valid email',
+      ],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      maxlength: 20,
+      minlength: 8,
+    },
+    password: {
+      type: String,
+      required: [true, 'Please provide password'],
+      minlength: 8,
+    },
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user',
+      lowercase: true,
+      trim: true,
+    },
+    gender: {
+      type: String,
+      enum: ['male', 'female', 'other'],
+      lowercase: true,
+      trim: true,
+    },
+    dob: {
+      type: Date,
+      trim: true,
+    },
+    active: { type: Boolean, default: true },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+    location: {
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point',
+      },
+      coordinates: {
+        type: [{ type: Number }],
+        required: true,
+      },
+    },
+    address: addressSchema, // Group address-related properties inside the "address" object
     recoveryToken: {
       type: String,
     },
   },
   { timestamps: true }
 )
+
 userSchema.pre('save', async function () {
   const salt = await bcrypt.genSalt(10)
   this.password = await bcrypt.hash(this.password, salt)
@@ -161,8 +174,8 @@ userSchema.methods.createPasswordResetToken = async function () {
 
 //  compare password with hashed password
 
-userSchema.methods.comparePassword = async function (candiDatePassword) {
-  const isMatch = await bcrypt.compare(candiDatePassword, this.password)
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  const isMatch = await bcrypt.compare(candidatePassword, this.password)
   return isMatch
 }
 
