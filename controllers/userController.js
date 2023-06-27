@@ -194,6 +194,7 @@ const getAllUsers = async (req, res, next) => {
       ],
     }
     const totalCount = await User.countDocuments(query) // Get the total count of matching users
+    const totalData = await User.countDocuments()
 
     const totalPages = Math.ceil(totalCount / limit) // Calculate the total number of pages based on the limit
 
@@ -207,6 +208,7 @@ const getAllUsers = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'All users',
+      totalData,
       totalCount,
       countOnPage: users.length,
       totalPages,
