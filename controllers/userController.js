@@ -218,6 +218,31 @@ const getAllUsers = async (req, res, next) => {
   }
 }
 
+// ==========>>>>>> Read operation: Get a user by ID admin only
+const getUserById = async (req, res, next) => {
+  console.log('updateUserById')
+  // check if params and token id are same or user is admin then only allow to access this route
+
+  if (req.params.id !== req.user.userId && req.user.role !== 'admin') {
+    return res.status(StatusCodes.UNAUTHORIZED).json({
+      success: false,
+      message: 'Not authorized to access this route!',
+      result: 'Token Id is different then params Id',
+    })
+  }
+
+  try {
+    const { id } = req.params
+    const user = await User.findById(id, '-password')
+
+    res
+      .status(StatusCodes.OK)
+      .json({ success: true, message: 'Single User ', result: user })
+  } catch (err) {
+    next(err)
+  }
+}
+
 // ==========>>>>>> Update operation: Update a user by ID admin only
 const updateUserById = async (req, res, next) => {
   const { id } = req.params
