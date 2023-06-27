@@ -56,7 +56,7 @@ const LoginUser = async (req, res, next) => {
 
   res
     .status(StatusCodes.OK)
-    .json({ success: true, role: user.role, name: user.name, token })
+    .json({ success: true, role: user.role, name: user.firstName, token })
 }
 
 // ==========>>>>>> Update operation: Recover password
