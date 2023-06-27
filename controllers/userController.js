@@ -33,7 +33,7 @@ const createUser = async (req, res, next) => {
 const LoginUser = async (req, res, next) => {
   const { email, password } = req.body
   const user = await User.findOne({ email })
-
+  const { role, firstName } = user
   // check if user exists
 
   if (!user) {
@@ -54,9 +54,7 @@ const LoginUser = async (req, res, next) => {
 
   const token = await user.createJWT()
 
-  res
-    .status(StatusCodes.OK)
-    .json({ success: true, role: user.role, name: user.firstName, token })
+  res.status(StatusCodes.OK).json({ success: true, role, firstName, token })
 }
 
 // ==========>>>>>> Update operation: Recover password
