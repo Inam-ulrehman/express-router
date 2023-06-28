@@ -207,7 +207,7 @@ const getAllUsers = async (req, res, next) => {
         { name: regexPattern },
         { lastName: regexPattern },
         { email: regexPattern },
-        { mobile: regexPattern },
+        { cellPhone: regexPattern },
       ],
     }
     const totalCount = await User.countDocuments(query) // Get the total count of matching users
