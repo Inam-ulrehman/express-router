@@ -57,7 +57,7 @@ const LoginUser = async (req, res, next) => {
   res.status(StatusCodes.OK).json({ success: true, role, firstName, token })
 }
 
-// ==========>>>>>> Update operation: Recover password
+// ==========>>>>>> Update operation: Recover password by email
 
 const recoverPassword = async (req, res, next) => {
   const { email } = req.body
@@ -85,6 +85,33 @@ const recoverPassword = async (req, res, next) => {
       success: false,
       message: 'Failed to send password reset email SendGrid Error!',
     })
+  }
+}
+// ==========>>>>>> Update operation: Update password by token (reset password) by link sent to email
+const updatePasswordByToken = async (req, res, next) => {
+  const { userId } = req.user
+  const { password } = req.body
+
+  const salt = await bcrypt.genSalt(10)
+  const hashedPassword = await bcrypt.hash(password, salt)
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      { _id: userId },
+      { password: hashedPassword },
+      { runValidators: true }
+    )
+    const token = await user.createJWT()
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Password updated successfully!',
+      name: user.firstName,
+      role: user.role,
+      token,
+      result: 'completed',
+    })
+  } catch (err) {
+    next(err)
   }
 }
 
@@ -318,29 +345,6 @@ const updateUserById = async (req, res, next) => {
       success: true,
       message: 'Profile updated successfully!',
       result: user,
-    })
-  } catch (err) {
-    next(err)
-  }
-}
-
-// ==========>>>>>> Update operation: Update password by token (reset password) by link sent to email
-const updatePasswordByToken = async (req, res, next) => {
-  const { userId } = req.user
-  const { password } = req.body
-
-  const salt = await bcrypt.genSalt(10)
-  const hashedPassword = await bcrypt.hash(password, salt)
-  try {
-    const user = await User.findByIdAndUpdate(
-      { _id: userId },
-      { password: hashedPassword },
-      { runValidators: true }
-    )
-    res.status(StatusCodes.OK).json({
-      success: true,
-      message: 'Password updated successfully!',
-      result: 'completed',
     })
   } catch (err) {
     next(err)
