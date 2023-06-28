@@ -107,7 +107,7 @@ const updateUserProfileByToken = async (req, res, next) => {
   const { userId } = req.user
 
   let {
-    name,
+    firstName,
     lastName,
     cellPhone,
     homePhone,
@@ -129,12 +129,15 @@ const updateUserProfileByToken = async (req, res, next) => {
   if (location) {
     location = JSON.parse(location)
   }
+  if (address) {
+    address = JSON.parse(address)
+  }
   // update user
   try {
     const user = await User.findByIdAndUpdate(
       { _id: userId },
       {
-        name,
+        firstName,
         lastName,
         cellPhone,
         homePhone,
