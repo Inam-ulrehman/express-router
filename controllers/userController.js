@@ -217,7 +217,10 @@ const getAllUsers = async (req, res, next) => {
 
     const offset = (page - 1) * limit // Calculate the offset based on the page and limit
 
-    const users = await User.find(query)
+    const users = await User.find(
+      query,
+      '-password -__v -updatedAt -dob -location -gender -address.apartment -address.house -address.street -address.city -address.region -address.province'
+    )
       .sort(sort) // Sort the users based on the provided sort parameter
       .skip(offset)
       .limit(limit)

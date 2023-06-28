@@ -28,9 +28,11 @@ const authenticateAdmin = async (req, res, next) => {
     const user = await User.findById(userId)
 
     if (!user) {
-      return res
-        .status(StatusCodes.UNAUTHORIZED)
-        .json({ success: false, message: 'User not found!', result: user })
+      return res.status(StatusCodes.UNAUTHORIZED).json({
+        success: false,
+        message: 'You are not authorized to access this route!',
+        result: 'User not found in db or user is deleted from db',
+      })
     }
 
     // check if user is admin or not
