@@ -105,7 +105,7 @@ const updatePasswordByToken = async (req, res, next) => {
     res.status(StatusCodes.OK).json({
       success: true,
       message: 'Password updated successfully!',
-      name: user.firstName,
+      name: user.firstName.replace(/\s/g, '-'),
       role: user.role,
       token,
       result: 'completed',
