@@ -142,7 +142,7 @@ const updateUserProfileByToken = async (req, res, next) => {
         password,
         gender,
         dob,
-        address: address ? JSON.parse(address) : null,
+        address,
         location,
         verified,
       },
