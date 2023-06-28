@@ -116,27 +116,10 @@ const updateUserProfileByToken = async (req, res, next) => {
     gender,
     dob,
     location,
-    apartment,
-    house,
-    street,
-    city,
-    region,
-    province,
-    country,
-    postalCode,
+    address,
     verified,
   } = req.body
-  // Create the address object
-  const address = {
-    apartment,
-    house,
-    street,
-    city,
-    region,
-    province,
-    country,
-    postalCode,
-  }
+
   // check if user want to update password then hash it and update it
 
   if (password) {
@@ -160,7 +143,7 @@ const updateUserProfileByToken = async (req, res, next) => {
         gender,
         dob,
         address,
-        location: location ? JSON.parse(location) : undefined, // Optional update of the location field
+        location,
         verified,
       },
       { new: true },
