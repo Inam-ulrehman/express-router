@@ -219,7 +219,7 @@ const getAllUsers = async (req, res, next) => {
 
     const users = await User.find(
       query,
-      '-password -__v -updatedAt -dob -location -gender -address.apartment -address.house -address.street -address.city -address.region -address.postalCode'
+      '-password -__v -updatedAt -dob -location -gender -address.apartment -address.house -address.street -address.region -address.province -address.postalCode'
     )
       .sort(sort) // Sort the users based on the provided sort parameter
       .skip(offset)
