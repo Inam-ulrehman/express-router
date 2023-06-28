@@ -153,7 +153,8 @@ const updateUserProfileByToken = async (req, res, next) => {
       {
         name,
         lastName,
-        mobile,
+        cellPhone,
+        homePhone,
         email,
         password,
         gender,
