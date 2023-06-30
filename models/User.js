@@ -150,7 +150,7 @@ userSchema.pre('save', async function () {
 userSchema.methods.createJWT = async function () {
   const alg = 'HS256'
 
-  return await new jose.SignJWT({ userId: this._id, name: this.name })
+  return await new jose.SignJWT({ userId: this._id, name: this.firstName })
     .setProtectedHeader({ alg })
     .setIssuedAt()
     .setIssuer(this.role)
@@ -164,7 +164,7 @@ userSchema.methods.createJWT = async function () {
 userSchema.methods.createPasswordResetToken = async function () {
   const alg = 'HS256'
 
-  return await new jose.SignJWT({ userId: this._id, name: this.name })
+  return await new jose.SignJWT({ userId: this._id, name: this.firstName })
     .setProtectedHeader({ alg })
     .setIssuedAt()
     .setIssuer(this.role)
