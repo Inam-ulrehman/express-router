@@ -37,7 +37,7 @@ const getSampleById = async (req, res, next) => {
     const { id } = req.params
     const sample = await Sample.findById(id)
     if (!sample) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ success: false, message: 'Sample not found', result: sample })
     }
